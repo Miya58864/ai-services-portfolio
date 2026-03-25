@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI智能体开发服务 | 一站式企业AI解决方案</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gradient-1: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%);
+            --gradient-2: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --shadow: 0 10px 40px rgba(0,0,0,0.1);
+            --shadow-lg: 0 25px 60px rgba(0,0,0,0.15);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--white); }
+        .nav-cta {
+            background: var(--gradient-1);
+            color: var(--white) !important;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(99,102,241,0.4);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            background: var(--gradient-2);
+            display: flex;
+            align-items: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 80%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(99,102,241,0.15) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+        }
+        .hero-text h1 span {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-text p {
+            font-size: 1.15rem;
+            color: #94a3b8;
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+        }
+        .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .btn-primary {
+            background: var(--gradient-1);
+            color: var(--white);
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(99,102,241,0.4);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.4);
+        }
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .stat-item { text-align: center; }
+        .stat-num {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label { color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; }
+
+        /* Hero Visual */
+        .hero-visual {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        .code-window {
+            background: #1a1b26;
+            border-radius: 12px;
+            overflow: hidden;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+        .code-header {
+            background: rgba(255,255,255,0.05);
+            padding: 0.75rem 1rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .code-dot.red { background: #ff5f57; }
+        .code-dot.yellow { background: #febc2e; }
+        .code-dot.green { background: #28c840; }
+        .code-body {
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            color: #a9b1d6;
+        }
+        .code-keyword { color: #bb9af7; }
+        .code-string { color: #9ece6a; }
+        .code-func { color: #7aa2f7; }
+        .code-comment { color: #565f89; }
+        .code-number { color: #ff9e64; }
+        .typing-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.1em;
+            background: var(--primary);
+            animation: blink 1s step-end infinite;
+            vertical-align: text-bottom;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Services */
+        .services {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-tag {
+            display: inline-block;
+            background: rgba(99,102,241,0.1);
+            color: var(--primary);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        .section-desc {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        .service-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-1);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: transparent;
+        }
+        .service-card:hover::before { transform: scaleX(1); }
+        .service-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .service-icon.blue { background: rgba(99,102,241,0.1); }
+        .service-icon.cyan { background: rgba(6,182,212,0.1); }
+        .service-icon.amber { background: rgba(245,158,11,0.1); }
+        .service-icon.green { background: rgba(16,185,129,0.1); }
+        .service-icon.rose { background: rgba(244,63,94,0.1); }
+        .service-icon.violet { background: rgba(139,92,246,0.1); }
+        .service-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        .service-card p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .service-price {
+            margin-top: 1.25rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Pricing */
+        .pricing {
+            padding: 6rem 2rem;
+            background: var(--gradient-2);
+            color: var(--white);
+        }
+        .pricing .section-tag { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+        .pricing .section-title { color: var(--white); }
+        .pricing .section-desc { color: #94a3b8; }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .pricing-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .pricing-card.featured {
+            background: rgba(99,102,241,0.15);
+            border-color: rgba(99,102,241,0.4);
+            transform: scale(1.05);
+        }
+        .pricing-card.featured::before {
+            content: '🔥 最受欢迎';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient-1);
+            color: white;
+            padding: 0.3rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(99,102,241,0.5);
+        }
+        .pricing-card.featured:hover { transform: scale(1.05) translateY(-5px); }
+        .pricing-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        .pricing-price span { font-size: 1rem; color: #64748b; font-weight: 400; }
+        .pricing-desc {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .pricing-features { list-style: none; margin-bottom: 2rem; }
+        .pricing-features li {
+            padding: 0.5rem 0;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .pricing-features li::before {
+            content: '✓';
+            background: rgba(99,102,241,0.2);
+            color: #a5b4fc;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .pricing-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 0.9rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        .pricing-btn.outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--white);
+        }
+        .pricing-btn.outline:hover { background: rgba(255,255,255,0.1); }
+        .pricing-btn.filled {
+            background: var(--gradient-1);
+            color: var(--white);
+        }
+        .pricing-btn.filled:hover {
+            box-shadow: 0 5px 20px rgba(99,102,241,0.4);
+        }
+
+        /* Demo */
+        .demo {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .demo-container {
+            background: var(--white);
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        .demo-chat {
+            padding: 2rem;
+            border-right: 1px solid #e2e8f0;
+        }
+        .demo-chat h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .chat-messages { display: flex; flex-direction: column; gap: 1rem; min-height: 300px; }
+        .chat-msg {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            animation: fadeInUp 0.3s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-msg.user {
+            background: var(--gradient-1);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-msg.bot {
+            background: #f1f5f9;
+            color: var(--dark);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-input {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .chat-input input:focus { border-color: var(--primary); }
+        .chat-input button {
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .chat-input button:hover { transform: scale(1.05); }
+
+        .demo-info {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .demo-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .demo-info p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        .demo-features { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+        .demo-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+        .demo-features li .check {
+            background: rgba(16,185,129,0.1);
+            color: #10b981;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+
+        /* Process */
+        .process {
+            padding: 6rem 2rem;
+            background: #f1f5f9;
+        }
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .process-step {
+            text-align: center;
+            position: relative;
+        }
+        .process-step::after {
+            content: '→';
+            position: absolute;
+            right: -1.5rem;
+            top: 2.5rem;
+            font-size: 1.5rem;
+            color: #cbd5e1;
+        }
+        .process-step:last-child::after { display: none; }
+        .process-num {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: var(--gradient-1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin: 0 auto 1.25rem;
+        }
+        .process-step h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .process-step p { color: var(--gray); font-size: 0.85rem; }
+
+        /* CTA */
+        .cta {
+            padding: 6rem 2rem;
+            text-align: center;
+            background: var(--gradient-2);
+        }
+        .cta h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+        .cta p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto 2.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 2rem;
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.85rem;
+            background: var(--light);
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content { grid-template-columns: 1fr; }
+            .hero-text h1 { font-size: 2.5rem; }
+            .services-grid { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .pricing-card.featured { transform: none; }
+            .pricing-card.featured:hover { transform: translateY(-5px); }
+            .demo-container { grid-template-columns: 1fr; }
+            .demo-chat { border-right: none; border-bottom: 1px solid #e2e8f0; }
+            .process-grid { grid-template-columns: 1fr 1fr; }
+            .process-step::after { display: none; }
+            .hero-stats { flex-wrap: wrap; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+    <div class="nav-logo">🤖 AI Studio</div>
+    <div class="nav-links">
+        <a href="#services">服务</a>
+        <a href="#pricing">定价</a>
+        <a href="#demo">演示</a>
+        <a href="#process">流程</a>
+        <a href="#contact" class="nav-cta">立即咨询</a>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1>让AI为您的<span>业务</span>自动运转</h1>
+            <p>专注企业级AI Agent开发。从智能客服到工作流自动化，为您量身定制AI解决方案，降低运营成本60%以上。</p>
+            <div class="hero-btns">
+                <a href="#pricing" class="btn-primary">查看服务方案</a>
+                <a href="#demo" class="btn-secondary">在线体验Demo</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-num">50+</div>
+                    <div class="stat-label">成功案例</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">99%</div>
+                    <div class="stat-label">客户满意度</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">3天</div>
+                    <div class="stat-label">平均交付周期</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="code-window">
+                <div class="code-header">
+                    <div class="code-dot red"></div>
+                    <div class="code-dot yellow"></div>
+                    <div class="code-dot green"></div>
+                    <span style="color:#565f89; margin-left:0.75rem; font-size:0.8rem;">ai-agent.config.js</span>
+                </div>
+                <div class="code-body">
+                    <span class="code-keyword">const</span> agent = <span class="code-keyword">new</span> <span class="code-func">AIAgent</span>({
+                    <br>&nbsp;&nbsp;name: <span class="code-string">"智能客服小助手"</span>,
+                    <br>&nbsp;&nbsp;model: <span class="code-string">"deepseek-v3"</span>,
+                    <br>&nbsp;&nbsp;tools: [
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"知识库检索"</span>,
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"订单查询"</span>,
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"工单创建"</span>,
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"多轮对话"</span>,
+                    <br>&nbsp;&nbsp;],
+                    <br>&nbsp;&nbsp;memory: <span class="code-keyword">true</span>,
+                    <br>&nbsp;&nbsp;responseTime: <span class="code-string">"&lt;800ms"</span>,
+                    <br>});<br><br>
+                    <span class="code-comment">// 部署完成！24/7自动服务</span><br>
+                    <span class="code-keyword">await</span> agent.<span class="code-func">deploy</span>();<span class="typing-cursor"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services -->
+<section class="services" id="services">
+    <div class="section-tag">核心服务</div>
+    <h2 class="section-title">六大AI能力，覆盖企业全场景</h2>
+    <p class="section-desc">从对话式AI到复杂工作流自动化，提供一站式智能解决方案</p>
+    <div class="services-grid">
+        <div class="service-card">
+            <div class="service-icon blue">💬</div>
+            <h3>智能客服机器人</h3>
+            <p>基于大模型的智能客服，支持多轮对话、知识库问答、订单查询，7×24小时在线服务</p>
+            <div class="service-price">¥3,000 起</div>
+        </div>
+        <div class="service-card">
+            <div class="service-icon cyan">⚡</div>
+            <h3>工作流自动化</h3>
+            <p>自动化重复性工作：邮件处理、数据录入、报告生成、审批流程，效率提升80%+</p>
+            <div class="service-price">¥5,000 起</div>
+        </div>
+        <div class="service-card">
+            <div class="service-icon amber">📊</div>
+            <h3>数据分析Agent</h3>
+            <p>自然语言查询数据、自动生成可视化报告、异常数据预警，让数据驱动决策</p>
+            <div class="service-price">¥8,000 起</div>
+        </div>
+        <div class="service-card">
+            <div class="service-icon green">🔍</div>
+            <h3>企业知识库</h3>
+            <p>RAG架构的企业私有知识库，精准检索文档、合同、政策，员工随时获取准确信息</p>
+            <div class="service-price">¥5,000 起</div>
+        </div>
+        <div class="service-card">
+            <div class="service-icon rose">📱</div>
+            <h3>内容生成Agent</h3>
+            <p>批量生成营销文案、产品描述、社交媒体内容，风格统一、质量可控</p>
+            <div class="service-price">¥2,000 起</div>
+        </div>
+        <div class="service-card">
+            <div class="service-icon violet">🔧</div>
+            <h3>自定义AI Agent</h3>
+            <p>根据您的具体业务需求，从零定制AI智能体，完全适配您的工作流程</p>
+            <div class="service-price">¥10,000 起</div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing" id="pricing">
+    <div style="max-width:1200px;margin:0 auto;text-align:center;">
+        <div class="section-tag">服务套餐</div>
+        <h2 class="section-title">选择适合您的方案</h2>
+        <p class="section-desc" style="margin:0 auto 3rem;">灵活定价，首单享8折优惠</p>
+    </div>
+    <div class="pricing-grid">
+        <div class="pricing-card">
+            <div class="pricing-name">🚀 启航版</div>
+            <div class="pricing-price">¥2,999 <span>/项目</span></div>
+            <div class="pricing-desc">适合初创团队和小微企业</div>
+            <ul class="pricing-features">
+                <li>1个AI智能体搭建</li>
+                <li>基础对话能力</li>
+                <li>最多3个工具集成</li>
+                <li>500条知识库文档</li>
+                <li>3天交付</li>
+                <li>7天免费调试</li>
+            </ul>
+            <button class="pricing-btn outline">立即咨询</button>
+        </div>
+        <div class="pricing-card featured">
+            <div class="pricing-name">⚡ 专业版</div>
+            <div class="pricing-price">¥7,999 <span>/项目</span></div>
+            <div class="pricing-desc">适合中型企业深度定制</div>
+            <ul class="pricing-features">
+                <li>3个AI智能体协同</li>
+                <li>高级工作流自动化</li>
+                <li>最多10个工具/API集成</li>
+                <li>5000条知识库文档</li>
+                <li>RAG精准检索</li>
+                <li>5天交付</li>
+                <li>30天免费维护</li>
+                <li>数据分析仪表盘</li>
+            </ul>
+            <button class="pricing-btn filled">立即咨询</button>
+        </div>
+        <div class="pricing-card">
+            <div class="pricing-name">🏢 企业版</div>
+            <div class="pricing-price">¥19,999 <span>/项目</span></div>
+            <div class="pricing-desc">适合大型企业全套AI方案</div>
+            <ul class="pricing-features">
+                <li>不限数量AI智能体</li>
+                <li>复杂多Agent协作</li>
+                <li>全系统API集成</li>
+                <li>无限知识库</li>
+                <li>私有化部署</li>
+                <li>10天交付</li>
+                <li>90天免费维护</li>
+                <li>专属技术顾问</li>
+                <li>团队培训</li>
+            </ul>
+            <button class="pricing-btn outline">立即咨询</button>
+        </div>
+    </div>
+</section>
+
+<!-- Demo -->
+<section class="demo" id="demo">
+    <div style="text-align:center;">
+        <div class="section-tag">在线演示</div>
+        <h2 class="section-title">体验AI智能客服</h2>
+        <p class="section-desc" style="margin:0 auto 3rem;">右边的对话窗口展示了我们搭建的智能客服Demo效果</p>
+    </div>
+    <div class="demo-container">
+        <div class="demo-chat">
+            <h3>💬 智能客服演示</h3>
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-msg bot">您好！我是AI智能客服小助手 👋 请问有什么可以帮您的？</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="输入您的问题..." onkeypress="if(event.key==='Enter')sendMessage()">
+                <button onclick="sendMessage()">发送</button>
+            </div>
+        </div>
+        <div class="demo-info">
+            <h3>🔥 这就是您将获得的AI能力</h3>
+            <p>我们搭建的AI智能体具备以下特性，可直接部署到您的网站、微信公众号、企业微信等平台：</p>
+            <ul class="demo-features">
+                <li><span class="check">✓</span> 基于DeepSeek/GPT大模型，理解力强</li>
+                <li><span class="check">✓</span> 支持多轮对话，上下文记忆</li>
+                <li><span class="check">✓</span> 企业知识库RAG检索，回答准确</li>
+                <li><span class="check">✓</span> 可集成订单查询、工单等API</li>
+                <li><span class="check">✓</span> 7×24小时不间断服务</li>
+                <li><span class="check">✓</span> 支持微信/网页/APP多端部署</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- Process -->
+<section class="process" id="process">
+    <div style="text-align:center;max-width:1200px;margin:0 auto;">
+        <div class="section-tag">合作流程</div>
+        <h2 class="section-title">四步完成AI部署</h2>
+        <p class="section-desc" style="margin:0 auto 3rem;">从需求沟通到上线，最快3天交付</p>
+    </div>
+    <div class="process-grid">
+        <div class="process-step">
+            <div class="process-num">1</div>
+            <h4>需求沟通</h4>
+            <p>了解您的业务场景和痛点，确定AI方案</p>
+        </div>
+        <div class="process-step">
+            <div class="process-num">2</div>
+            <h4>方案设计</h4>
+            <p>设计Agent架构、工作流、集成方案</p>
+        </div>
+        <div class="process-step">
+            <div class="process-num">3</div>
+            <h4>开发测试</h4>
+            <p>搭建、调优、测试，确保稳定可靠</p>
+        </div>
+        <div class="process-step">
+            <div class="process-num">4</div>
+            <h4>交付上线</h4>
+            <p>部署到生产环境，提供培训和运维支持</p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="contact">
+    <h2>准备好用AI升级您的业务了吗？</h2>
+    <p>现在咨询，首单享8折优惠。最快3天交付，30天免费维护。</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="#" class="btn-primary" onclick="alert('请联系QQ: 896353189 获取咨询')">💡 立即免费咨询</a>
+        <a href="#" class="btn-secondary" onclick="alert('请联系QQ: 896353189 获取更多案例')">📋 查看更多案例</a>
+    </div>
+</section>
+
+<!-- Footer -->
+<div class="footer">
+    <p>© 2026 AI Studio | 专业AI Agent开发服务 | 技术驱动，服务至上</p>
+</div>
+
+<script>
+// 智能客服Demo逻辑
+const responses = {
+    '价格|费用|多少钱|报价': '我们提供三档套餐：启航版¥2,999、专业版¥7,999、企业版¥19,999。首单还享8折优惠哦！具体价格根据需求可能略有调整，可以详细沟通～',
+    '多久|时间|交付|工期': '一般项目3-10天交付。启航版3天，专业版5天，企业版10天。加急需求可以协商哦！',
+    '能做什么|功能|能力|有什么用': '我们可以搭建：智能客服、工作流自动化、数据分析、企业知识库、内容生成等各类AI Agent。您有什么具体的业务需求吗？',
+    '技术|模型|用什么': '我们支持DeepSeek、GPT-4、文心一言等主流大模型，使用Dify/Coze/LangChain等专业平台搭建，支持私有化部署保障数据安全。',
+    '案例|之前做过|客户': '我们服务过电商、教育、金融、本地生活等多个行业的客户，搭建过智能客服、自动回复、数据分析等50+个成功案例。',
+    '联系|怎么找你|联系方式': '您可以通过QQ：896353189 联系我们，或者点击页面上方的咨询按钮。我们通常1小时内回复！'
+};
+
+const defaultResponses = [
+    '这是一个很好的问题！让我为您详细解答。我们的AI解决方案可以根据您的具体需求进行定制，建议您提供更多业务细节，我可以给出更精准的方案。',
+    '明白了！这个需求我们之前也帮其他客户处理过。建议我们可以约一个详细的需求沟通，我来为您设计最合适的AI方案。',
+    '感谢您的咨询！这个问题涉及比较多细节，建议加我QQ详细聊：896353189。或者您可以试试问我关于价格、功能、交付时间等问题～'
+];
+
+function findResponse(text) {
+    for (const [pattern, response] of Object.entries(responses)) {
+        const keywords = pattern.split('|');
+        if (keywords.some(kw => text.includes(kw))) {
+            return response;
+        }
+    }
+    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+}
+
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const messages = document.getElementById('chatMessages');
+
+    // Add user message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'chat-msg user';
+    userMsg.textContent = text;
+    messages.appendChild(userMsg);
+
+    input.value = '';
+
+    // Add bot response after delay
+    setTimeout(() => {
+        const botMsg = document.createElement('div');
+        botMsg.className = 'chat-msg bot';
+        botMsg.textContent = findResponse(text);
+        messages.appendChild(botMsg);
+        messages.scrollTop = messages.scrollHeight;
+    }, 600);
+
+    messages.scrollTop = messages.scrollHeight;
+}
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+    });
+});
+</script>
+
+</body>
+</html>

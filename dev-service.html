@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全栈开发服务 | AI赋能高效交付</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --accent: #6366f1;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gradient: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            --gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif; background: var(--light); color: var(--dark); line-height: 1.6; }
+        
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(15,23,42,0.95); backdrop-filter: blur(20px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .nav-logo { font-size: 1.5rem; font-weight: 800; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--white); }
+        .nav-cta { background: var(--gradient); color: white !important; padding: 0.5rem 1.5rem; border-radius: 50px; }
+
+        .hero { min-height: 100vh; background: var(--gradient-dark); display: flex; align-items: center; padding: 6rem 2rem; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: -50%; left: -30%; width: 80%; height: 200%; background: radial-gradient(ellipse, rgba(16,185,129,0.12) 0%, transparent 70%); }
+        .hero-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; position: relative; z-index: 1; }
+        .hero h1 { font-size: 3.2rem; font-weight: 800; color: white; line-height: 1.15; margin-bottom: 1.5rem; }
+        .hero h1 span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero > .hero-inner > .hero-text > p { color: #94a3b8; font-size: 1.1rem; margin-bottom: 2rem; max-width: 500px; }
+        .hero-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+        .hero-tag { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; padding: 0.3rem 0.8rem; border-radius: 8px; font-size: 0.8rem; }
+        
+        .btn { display: inline-block; padding: 0.9rem 2rem; border-radius: 12px; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: all 0.3s; cursor: pointer; border: none; }
+        .btn-primary { background: var(--gradient); color: white; }
+        .btn-primary:hover { box-shadow: 0 10px 30px rgba(16,185,129,0.4); transform: translateY(-2px); }
+        .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); }
+
+        .hero-showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .showcase-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem; text-align: center; }
+        .showcase-item .emoji { font-size: 2rem; margin-bottom: 0.5rem; }
+        .showcase-item h4 { color: white; font-size: 1rem; margin-bottom: 0.25rem; }
+        .showcase-item p { color: #64748b; font-size: 0.8rem; }
+
+        .section { padding: 5rem 2rem; max-width: 1200px; margin: 0 auto; }
+        .section-tag { display: inline-block; background: rgba(16,185,129,0.1); color: var(--primary); padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; }
+        .section-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .section-desc { color: var(--gray); font-size: 1rem; max-width: 600px; margin-bottom: 2.5rem; }
+
+        .skills-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .skill-card { background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; text-align: center; transition: all 0.3s; }
+        .skill-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .skill-card .icon { font-size: 2rem; margin-bottom: 0.75rem; }
+        .skill-card h4 { font-size: 0.95rem; margin-bottom: 0.25rem; }
+        .skill-card p { color: var(--gray); font-size: 0.8rem; }
+
+        .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .project-card { background: white; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; transition: all 0.3s; }
+        .project-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+        .project-img { height: 180px; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+        .project-img.green { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+        .project-img.blue { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+        .project-img.purple { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
+        .project-body { padding: 1.5rem; }
+        .project-body h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .project-body p { color: var(--gray); font-size: 0.85rem; margin-bottom: 1rem; }
+        .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .project-tags span { background: #f1f5f9; color: var(--gray); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; }
+
+        .pricing-section { padding: 5rem 2rem; background: var(--gradient-dark); color: white; }
+        .pricing-section .section-tag { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+        .pricing-section .section-title { color: white; }
+        .pricing-section .section-desc { color: #94a3b8; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1200px; margin: 0 auto; }
+        .price-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem; transition: all 0.3s; }
+        .price-card:hover { border-color: rgba(16,185,129,0.5); transform: translateY(-3px); }
+        .price-card .name { color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .price-card .price { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .price-card .price span { font-size: 0.9rem; color: #64748b; }
+        .price-card .desc { color: #64748b; font-size: 0.85rem; margin-bottom: 1.5rem; }
+        .price-card ul { list-style: none; margin-bottom: 1.5rem; }
+        .price-card li { padding: 0.4rem 0; color: #cbd5e1; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+        .price-card li::before { content: '✓'; background: rgba(16,185,129,0.2); color: #6ee7b7; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; flex-shrink: 0; }
+
+        .advantages { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 2rem; }
+        .advantage { display: flex; gap: 1rem; align-items: flex-start; padding: 1.5rem; background: white; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .advantage .icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.25rem; }
+        .advantage h4 { font-size: 1rem; margin-bottom: 0.25rem; }
+        .advantage p { color: var(--gray); font-size: 0.85rem; }
+
+        .footer { padding: 2rem; text-align: center; color: var(--gray); font-size: 0.85rem; background: var(--light); border-top: 1px solid #e2e8f0; }
+
+        @media (max-width: 768px) {
+            .hero-inner { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2.2rem; }
+            .skills-grid { grid-template-columns: repeat(2, 1fr); }
+            .projects-grid { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .advantages { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-logo">⚡ DevStudio</div>
+    <div class="nav-links">
+        <a href="#skills">技能</a>
+        <a href="#projects">案例</a>
+        <a href="#pricing">报价</a>
+        <a href="#advantages">优势</a>
+        <a href="#contact" class="nav-cta">联系我</a>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-text">
+            <h1>AI赋能的<span>全栈开发</span>服务</h1>
+            <p>拥有编程能力 + AI助手双重优势，开发效率提升3-5倍。网站、小程序、自动化脚本、API集成——快速交付，质量保证。</p>
+            <div class="hero-tags">
+                <span class="hero-tag">🌐 Web开发</span>
+                <span class="hero-tag">📱 小程序</span>
+                <span class="hero-tag">🔧 自动化脚本</span>
+                <span class="hero-tag">⚡ API集成</span>
+                <span class="hero-tag">🤖 AI应用</span>
+                <span class="hero-tag">🕷️ 数据采集</span>
+                <span class="hero-tag">☁️ 云部署</span>
+                <span class="hero-tag">📊 数据分析</span>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                <a href="#pricing" class="btn btn-primary">查看报价</a>
+                <a href="#projects" class="btn btn-outline">查看案例</a>
+            </div>
+        </div>
+        <div class="hero-showcase">
+            <div class="showcase-item">
+                <div class="emoji">🚀</div>
+                <h4>3x效率</h4>
+                <p>AI辅助开发</p>
+            </div>
+            <div class="showcase-item">
+                <div class="emoji">⚡</div>
+                <h4>极速交付</h4>
+                <p>简单项目1-3天</p>
+            </div>
+            <div class="showcase-item">
+                <div class="emoji">💰</div>
+                <h4>超值定价</h4>
+                <p>比同行低30%</p>
+            </div>
+            <div class="showcase-item">
+                <div class="emoji">🛡️</div>
+                <h4>质量保证</h4>
+                <p>30天免费维护</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="skills">
+    <div class="section-tag">技术栈</div>
+    <h2 class="section-title">全栈技术能力</h2>
+    <p class="section-desc">覆盖前端、后端、移动端、AI应用、云计算等多个领域</p>
+    <div class="skills-grid">
+        <div class="skill-card">
+            <div class="icon">🌐</div>
+            <h4>Web前端</h4>
+            <p>React / Vue / HTML5 / CSS3 / 响应式</p>
+        </div>
+        <div class="skill-card">
+            <div class="icon">⚙️</div>
+            <h4>后端开发</h4>
+            <p>Node.js / Python / Go / RESTful API</p>
+        </div>
+        <div class="skill-card">
+            <div class="icon">📱</div>
+            <h4>小程序</h4>
+            <p>微信小程序 / 支付宝小程序</p>
+        </div>
+        <div class="skill-card">
+            <div class="icon">🤖</div>
+            <h4>AI应用</h4>
+            <p>Dify / Coze / LangChain / RAG</p>
+        </div>
+        <div class="skill-card">
+            <div class="icon">☁️</div>
+            <h4>云计算</h4>
+            <p>阿里云 / Cloudflare Workers / Docker</p>
+        </div>
+        <div class="skill-card">
+            <div class="icon">🗄️</div>
+            <h4>数据库</h4>
+            <p>MySQL / MongoDB / Redis / PostgreSQL</p>
+        </div>
+        <div class="skill-card">
+            <div class="icon">🕷️</div>
+            <h4>数据采集</h4>
+            <p>Python爬虫 / API对接 / 数据清洗</p>
+        </div>
+        <div class="skill-card">
+            <div class="icon">🔧</div>
+            <h4>自动化</h4>
+            <p>脚本自动化 / CI/CD / 工作流</p>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="projects">
+    <div class="section-tag">项目案例</div>
+    <h2 class="section-title">代表作品展示</h2>
+    <p class="section-desc">部分已完成项目展示（可提供更多案例详情）</p>
+    <div class="projects-grid">
+        <div class="project-card">
+            <div class="project-img green">🤖</div>
+            <div class="project-body">
+                <h3>AI智能客服系统</h3>
+                <p>基于Dify搭建的企业级智能客服，集成知识库检索、多轮对话、工单创建，响应时间<800ms</p>
+                <div class="project-tags">
+                    <span>Dify</span><span>DeepSeek</span><span>RAG</span><span>API集成</span>
+                </div>
+            </div>
+        </div>
+        <div class="project-card">
+            <div class="project-img blue">📊</div>
+            <div class="project-body">
+                <h3>数据采集与分析平台</h3>
+                <p>自动化采集电商平台数据，清洗去重后生成可视化分析报告，支持定时任务和邮件推送</p>
+                <div class="project-tags">
+                    <span>Python</span><span>爬虫</span><span>数据分析</span><span>可视化</span>
+                </div>
+            </div>
+        </div>
+        <div class="project-card">
+            <div class="project-img purple">🌐</div>
+            <div class="project-body">
+                <h3>企业官网+CMS</h3>
+                <p>响应式企业官网，自研轻量CMS后台，支持文章发布、产品管理、SEO优化</p>
+                <div class="project-tags">
+                    <span>React</span><span>Node.js</span><span>MongoDB</span><span>部署</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pricing-section" id="pricing">
+    <div style="max-width:1200px;margin:0 auto;text-align:center;">
+        <div class="section-tag">服务报价</div>
+        <h2 class="section-title">透明定价，首单优惠</h2>
+        <p class="section-desc" style="margin:0 auto 2.5rem;">AI辅助开发，价格比传统方式低30%+，效率提升3倍+</p>
+    </div>
+    <div class="pricing-grid">
+        <div class="price-card">
+            <div class="name">🔧 小型项目</div>
+            <div class="price">¥1,000 <span>起</span></div>
+            <div class="desc">1-3天交付</div>
+            <ul>
+                <li>单页面/落地页开发</li>
+                <li>自动化脚本（Python/JS）</li>
+                <li>简单API对接</li>
+                <li>数据采集小工具</li>
+                <li>BUG修复/代码优化</li>
+                <li>7天免费维护</li>
+            </ul>
+            <button class="btn btn-outline" style="width:100%;text-align:center;" onclick="alert('联系QQ: 896353189')">立即咨询</button>
+        </div>
+        <div class="price-card" style="border-color:rgba(16,185,129,0.4);">
+            <div class="name">⚡ 中型项目</div>
+            <div class="price">¥5,000 <span>起</span></div>
+            <div class="desc">3-7天交付</div>
+            <ul>
+                <li>微信小程序开发</li>
+                <li>企业官网（含后台）</li>
+                <li>数据采集+分析系统</li>
+                <li>AI Agent搭建</li>
+                <li>自动化工作流</li>
+                <li>API集成开发</li>
+                <li>30天免费维护</li>
+            </ul>
+            <button class="btn btn-primary" style="width:100%;text-align:center;" onclick="alert('联系QQ: 896353189')">立即咨询</button>
+        </div>
+        <div class="price-card">
+            <div class="name">🏢 大型项目</div>
+            <div class="price">¥15,000 <span>起</span></div>
+            <div class="desc">7-30天交付</div>
+            <ul>
+                <li>完整SaaS平台</li>
+                <li>电商系统（含支付）</li>
+                <li>企业管理系统</li>
+                <li>AI应用全套方案</li>
+                <li>多端小程序+APP</li>
+                <li>云部署+运维</li>
+                <li>90天免费维护</li>
+            </ul>
+            <button class="btn btn-outline" style="width:100%;text-align:center;" onclick="alert('联系QQ: 896353189')">立即咨询</button>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="advantages">
+    <div class="section-tag">核心优势</div>
+    <h2 class="section-title">为什么选择我？</h2>
+    <p class="section-desc">AI辅助开发，真正实现又快又好</p>
+    <div class="advantages">
+        <div class="advantage">
+            <div class="icon">🤖</div>
+            <div>
+                <h4>AI辅助，3倍效率</h4>
+                <p>拥有专属AI助手辅助编码、调试、文档编写，开发效率远超传统方式</p>
+            </div>
+        </div>
+        <div class="advantage">
+            <div class="icon">💰</div>
+            <div>
+                <h4>极致性价比</h4>
+                <p>因为效率高，所以价格低。同等质量的项目，价格比市场低30%以上</p>
+            </div>
+        </div>
+        <div class="advantage">
+            <div class="icon">⚡</div>
+            <div>
+                <h4>极速交付</h4>
+                <p>简单项目1天起，中型项目3-7天。说到做到，绝不拖延</p>
+            </div>
+        </div>
+        <div class="advantage">
+            <div class="icon">🛡️</div>
+            <div>
+                <h4>质量保证</h4>
+                <p>代码规范、注释清晰、可维护性强。交付后提供免费维护期</p>
+            </div>
+        </div>
+        <div class="advantage">
+            <div class="icon">🗣️</div>
+            <div>
+                <h4>沟通顺畅</h4>
+                <p>全程中文沟通，及时反馈进度，有问必答</p>
+            </div>
+        </div>
+        <div class="advantage">
+            <div class="icon">🌐</div>
+            <div>
+                <h4>云服务经验</h4>
+                <p>精通阿里云、Cloudflare等平台，项目部署运维一站式搞定</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pricing-section" id="contact" style="text-align:center;">
+    <h2 style="font-size:2.2rem;font-weight:800;color:white;margin-bottom:1rem;">有项目需求？聊聊吧！</h2>
+    <p style="color:#94a3b8;font-size:1rem;max-width:500px;margin:0 auto 2rem;">首单享8折优惠，简单项目最快1天交付。欢迎随时联系！</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="alert('联系QQ: 896353189')">💬 QQ联系: 896353189</button>
+        <button class="btn btn-outline" onclick="alert('联系邮箱: 896353189@qq.com')">📧 邮箱联系</button>
+    </div>
+</section>
+
+<div class="footer">
+    <p>© 2026 DevStudio | AI赋能全栈开发服务 | 质量 · 效率 · 诚信</p>
+</div>
+
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => { e.preventDefault(); document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' }); });
+});
+</script>
+</body>
+</html>

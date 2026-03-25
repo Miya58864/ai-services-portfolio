@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Studio | 专业AI Agent & 全栈开发服务</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #6366f1;
+            --secondary: #10b981;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light: #f8fafc;
+            --white: #ffffff;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif; background: var(--light); color: var(--dark); line-height: 1.6; }
+        
+        .nav { background: rgba(15,23,42,0.95); backdrop-filter: blur(20px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
+        .nav-logo { font-size: 1.5rem; font-weight: 800; color: white; }
+        .nav-logo span { color: #a5b4fc; }
+        .nav-contact { color: #94a3b8; font-size: 0.85rem; }
+        .nav-contact a { color: #a5b4fc; text-decoration: none; }
+        
+        .hero { min-height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); display: flex; align-items: center; justify-content: center; padding: 6rem 2rem; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 30% 50%, rgba(99,102,241,0.15), transparent 50%), radial-gradient(circle at 70% 50%, rgba(16,185,129,0.1), transparent 50%); }
+        .hero-content { text-align: center; position: relative; z-index: 1; max-width: 800px; }
+        .hero-badge { display: inline-block; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #a5b4fc; padding: 0.4rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 600; margin-bottom: 2rem; }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; color: white; line-height: 1.2; margin-bottom: 1.5rem; }
+        .hero h1 .highlight-1 { color: #a5b4fc; }
+        .hero h1 .highlight-2 { color: #6ee7b7; }
+        .hero p { font-size: 1.15rem; color: #94a3b8; max-width: 600px; margin: 0 auto 3rem; }
+        
+        .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 900px; margin: 0 auto; }
+        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.5rem; text-align: left; transition: all 0.4s; cursor: pointer; text-decoration: none; color: inherit; display: block; position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; transition: height 0.3s; }
+        .card.ai::before { background: linear-gradient(90deg, #6366f1, #06b6d4); }
+        .card.dev::before { background: linear-gradient(90deg, #10b981, #06b6d4); }
+        .card:hover { transform: translateY(-8px); border-color: rgba(255,255,255,0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .card:hover::before { height: 4px; }
+        .card-icon { font-size: 2.5rem; margin-bottom: 1.25rem; }
+        .card h3 { font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 0.75rem; }
+        .card p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.7; }
+        .card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
+        .card-tag { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 0.2rem 0.7rem; border-radius: 6px; font-size: 0.75rem; }
+        .card-price { font-size: 1.25rem; font-weight: 700; }
+        .card.ai .card-price { color: #a5b4fc; }
+        .card.dev .card-price { color: #6ee7b7; }
+        .card-arrow { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 600; margin-top: 1rem; }
+        .card.ai .card-arrow { color: #a5b4fc; }
+        .card.dev .card-arrow { color: #6ee7b7; }
+        
+        .stats { display: flex; justify-content: center; gap: 3rem; margin-top: 4rem; padding-top: 3rem; border-top: 1px solid rgba(255,255,255,0.08); }
+        .stat { text-align: center; }
+        .stat-num { font-size: 2rem; font-weight: 800; color: white; }
+        .stat-label { color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; }
+        
+        .trust { padding: 4rem 2rem; max-width: 900px; margin: 0 auto; text-align: center; }
+        .trust h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 2rem; }
+        .trust-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .trust-item { background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; }
+        .trust-item .icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+        .trust-item h4 { font-size: 0.95rem; margin-bottom: 0.25rem; }
+        .trust-item p { color: var(--gray); font-size: 0.8rem; }
+        
+        .cta { padding: 4rem 2rem; text-align: center; background: linear-gradient(135deg, #0f172a, #1e293b); }
+        .cta h2 { font-size: 2rem; font-weight: 700; color: white; margin-bottom: 1rem; }
+        .cta p { color: #94a3b8; font-size: 1rem; margin-bottom: 2rem; }
+        .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn { display: inline-block; padding: 0.9rem 2rem; border-radius: 12px; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: all 0.3s; cursor: pointer; border: none; }
+        .btn-primary { background: linear-gradient(135deg, #6366f1, #06b6d4); color: white; }
+        .btn-primary:hover { box-shadow: 0 10px 30px rgba(99,102,241,0.4); transform: translateY(-2px); }
+        .btn-green { background: linear-gradient(135deg, #10b981, #06b6d4); color: white; }
+        .btn-green:hover { box-shadow: 0 10px 30px rgba(16,185,129,0.4); transform: translateY(-2px); }
+        
+        .footer { padding: 1.5rem; text-align: center; color: var(--gray); font-size: 0.8rem; background: var(--light); border-top: 1px solid #e2e8f0; }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .cards { grid-template-columns: 1fr; }
+            .trust-grid { grid-template-columns: 1fr; }
+            .stats { gap: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-logo">⚡ <span>AI Studio</span></div>
+    <div class="nav-contact">📧 <a href="mailto:896353189@qq.com">896353189@qq.com</a> &nbsp;|&nbsp; 💬 QQ: 896353189</div>
+</nav>
+
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">🤖 AI赋能 · 极速交付 · 首单8折</div>
+        <h1>
+            <span class="highlight-1">AI智能体</span> 开发<br>
+            & <span class="highlight-2">全栈编程</span> 服务
+        </h1>
+        <p>AI辅助开发，效率提升3-5倍。从智能客服到企业官网，为您量身定制技术解决方案。快速、高质量、高性价比。</p>
+        
+        <div class="cards">
+            <a href="ai-agent-service.html" class="card ai">
+                <div class="card-icon">🤖</div>
+                <h3>AI Agent 开发</h3>
+                <p>企业级AI智能体定制开发——智能客服、工作流自动化、数据分析、企业知识库。基于DeepSeek/GPT大模型，Dify/Coze平台搭建。</p>
+                <div class="card-tags">
+                    <span class="card-tag">智能客服</span>
+                    <span class="card-tag">工作流自动化</span>
+                    <span class="card-tag">知识库</span>
+                    <span class="card-tag">RAG</span>
+                    <span class="card-tag">数据分析</span>
+                </div>
+                <div class="card-price">¥2,999 起</div>
+                <div class="card-arrow">查看详情 →</div>
+            </a>
+            
+            <a href="dev-service.html" class="card dev">
+                <div class="card-icon">⚡</div>
+                <h3>全栈开发服务</h3>
+                <p>AI赋能的全栈编程服务——网站开发、小程序、自动化脚本、API集成、数据采集。拥有专属AI助手，开发效率远超传统方式。</p>
+                <div class="card-tags">
+                    <span class="card-tag">Web开发</span>
+                    <span class="card-tag">小程序</span>
+                    <span class="card-tag">自动化脚本</span>
+                    <span class="card-tag">API集成</span>
+                    <span class="card-tag">数据采集</span>
+                </div>
+                <div class="card-price">¥1,000 起</div>
+                <div class="card-arrow">查看详情 →</div>
+            </a>
+        </div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-num">3-5x</div>
+                <div class="stat-label">AI辅助效率提升</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">99%</div>
+                <div class="stat-label">客户满意度</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">3天</div>
+                <div class="stat-label">最快交付</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">30%</div>
+                <div class="stat-label">价格低于同行</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="trust">
+    <h2>为什么选择我们？</h2>
+    <div class="trust-grid">
+        <div class="trust-item">
+            <div class="icon">🤖</div>
+            <h4>AI辅助开发</h4>
+            <p>专属AI助手辅助编码、调试、文档，效率远超传统方式</p>
+        </div>
+        <div class="trust-item">
+            <div class="icon">⚡</div>
+            <h4>极速交付</h4>
+            <p>简单项目1天起，中型3-7天。说到做到，绝不拖延</p>
+        </div>
+        <div class="trust-item">
+            <div class="icon">💰</div>
+            <h4>极致性价比</h4>
+            <p>因为效率高所以价格低，同等质量低30%+</p>
+        </div>
+        <div class="trust-item">
+            <div class="icon">☁️</div>
+            <h4>云服务专家</h4>
+            <p>精通阿里云、Cloudflare，部署运维一站式搞定</p>
+        </div>
+        <div class="trust-item">
+            <div class="icon">🛡️</div>
+            <h4>质量保证</h4>
+            <p>代码规范、注释清晰，交付后提供免费维护期</p>
+        </div>
+        <div class="trust-item">
+            <div class="icon">🗣️</div>
+            <h4>沟通顺畅</h4>
+            <p>全程中文沟通，及时反馈进度，有问必答</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <h2>有项目需求？现在聊聊！</h2>
+    <p>首单享8折优惠，简单项目最快1天交付。欢迎随时咨询！</p>
+    <div class="cta-btns">
+        <a href="ai-agent-service.html" class="btn btn-primary">🤖 AI Agent服务</a>
+        <a href="dev-service.html" class="btn btn-green">⚡ 编程开发服务</a>
+    </div>
+</section>
+
+<div class="footer">
+    <p>© 2026 AI Studio | AI赋能开发服务 | 📧 896353189@qq.com | 💬 QQ: 896353189</p>
+</div>
+
+</body>
+</html>
