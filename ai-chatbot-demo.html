@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI智能客服系统 - 在线演示 | TechSail Studio</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
+        
+        /* Header */
+        .header { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .header h1 { font-size: 1.8rem; background: linear-gradient(90deg, #00d2ff, #3a7bd5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header p { color: #888; margin-top: 5px; }
+        .badge { display: inline-block; background: rgba(0,210,255,0.15); color: #00d2ff; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; margin-left: 10px; }
+        
+        /* Main Layout */
+        .container { display: flex; max-width: 1400px; margin: 0 auto; height: calc(100vh - 80px); }
+        
+        /* Sidebar */
+        .sidebar { width: 300px; background: #12121a; border-right: 1px solid rgba(255,255,255,0.08); padding: 20px; overflow-y: auto; }
+        .sidebar h3 { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        .chat-item { padding: 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
+        .chat-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+        .chat-item.active { background: rgba(0,210,255,0.1); border-color: rgba(0,210,255,0.3); }
+        .chat-item .name { font-weight: 600; font-size: 0.9rem; }
+        .chat-item .preview { font-size: 0.75rem; color: #888; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-item .time { font-size: 0.65rem; color: #555; float: right; }
+        .chat-item .status { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+        .status.online { background: #00e676; }
+        .status.away { background: #ffab00; }
+        .status.offline { background: #555; }
+        .unread { background: #3a7bd5; color: white; font-size: 0.65rem; padding: 1px 6px; border-radius: 10px; float: right; }
+        
+        /* Chat Area */
+        .chat-area { flex: 1; display: flex; flex-direction: column; }
+        .chat-header { padding: 15px 25px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
+        .chat-header .avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .chat-header .info h4 { font-size: 0.95rem; }
+        .chat-header .info p { font-size: 0.75rem; color: #00e676; }
+        .chat-header .actions { margin-left: auto; display: flex; gap: 10px; }
+        .chat-header .actions button { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ccc; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+        .chat-header .actions button:hover { background: rgba(255,255,255,0.1); }
+        
+        /* Messages */
+        .messages { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .message { max-width: 70%; padding: 12px 16px; border-radius: 16px; font-size: 0.9rem; line-height: 1.5; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .message.user { align-self: flex-end; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-bottom-right-radius: 4px; }
+        .message.bot { align-self: flex-start; background: #1a1a2e; border: 1px solid rgba(255,255,255,0.08); border-bottom-left-radius: 4px; }
+        .message .meta { font-size: 0.65rem; color: #666; margin-top: 5px; }
+        .message .typing { display: flex; gap: 4px; padding: 4px 0; }
+        .message .typing span { width: 6px; height: 6px; background: #888; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out; }
+        .message .typing span:nth-child(1) { animation-delay: 0s; }
+        .message .typing span:nth-child(2) { animation-delay: 0.2s; }
+        .message .typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        
+        .message.bot .quick-replies { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .quick-reply { background: rgba(0,210,255,0.1); border: 1px solid rgba(0,210,255,0.3); color: #00d2ff; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+        .quick-reply:hover { background: rgba(0,210,255,0.2); }
+        
+        /* Stats Panel */
+        .stats-panel { display: none; width: 280px; background: #12121a; border-left: 1px solid rgba(255,255,255,0.08); padding: 20px; overflow-y: auto; }
+        .stats-panel.visible { display: block; }
+        .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 15px; margin-bottom: 12px; }
+        .stat-card .label { font-size: 0.75rem; color: #888; margin-bottom: 5px; }
+        .stat-card .value { font-size: 1.5rem; font-weight: 700; }
+        .stat-card .value.blue { color: #00d2ff; }
+        .stat-card .value.green { color: #00e676; }
+        .stat-card .value.purple { color: #764ba2; }
+        .stat-card .bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+        .stat-card .bar-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+        
+        /* Input Area */
+        .input-area { padding: 15px 25px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 10px; align-items: center; }
+        .input-area input { flex: 1; background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px 18px; border-radius: 24px; font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+        .input-area input:focus { border-color: #3a7bd5; }
+        .input-area button { background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s; display: flex; align-items: center; justify-content: center; }
+        .input-area button:hover { transform: scale(1.05); }
+        
+        /* Floating Elements */
+        .ai-badge { position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 10px 20px; border-radius: 30px; font-size: 0.85rem; box-shadow: 0 4px 20px rgba(102,126,234,0.4); z-index: 100; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        
+        /* Demo Notice */
+        .demo-notice { background: rgba(255,152,0,0.1); border: 1px solid rgba(255,152,0,0.3); border-radius: 8px; padding: 8px 15px; font-size: 0.75rem; color: #ffab00; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 AI智能客服系统 <span class="badge">在线演示</span></h1>
+        <p>由 TechSail Studio 构建的AI Agent自动化客服解决方案</p>
+    </div>
+    
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="demo-notice" style="margin-bottom: 15px;">💡 交互式Demo - 点击对话查看AI自动回复</div>
+            <h3>💬 当前对话</h3>
+            
+            <div class="chat-item active" onclick="switchChat(0)">
+                <span class="status online"></span><span class="name">张先生</span><span class="unread">2</span>
+                <div class="preview">你好，我想咨询一下你们的产品...</div>
+            </div>
+            <div class="chat-item" onclick="switchChat(1)">
+                <span class="status online"></span><span class="name">李女士</span>
+                <span class="time">5分钟前</span>
+                <div class="preview">退款流程是什么？</div>
+            </div>
+            <div class="chat-item" onclick="switchChat(2)">
+                <span class="status away"></span><span class="name">王经理</span>
+                <span class="time">1小时前</span>
+                <div class="preview">企业批量采购有什么优惠？</div>
+            </div>
+            <div class="chat-item" onclick="switchChat(3)">
+                <span class="status offline"></span><span class="name">陈同学</span>
+                <span class="time">昨天</span>
+                <div class="preview">这个功能怎么用？</div>
+            </div>
+            
+            <h3 style="margin-top: 25px;">📊 今日统计</h3>
+            <div style="font-size: 0.8rem; color: #888; line-height: 2;">
+                总对话数：<span style="color: #00d2ff;">128</span><br>
+                AI自动解决：<span style="color: #00e676;">96 (75%)</span><br>
+                平均响应：<span style="color: #764ba2;">1.2秒</span><br>
+                客户满意度：<span style="color: #ffab00;">4.8/5.0</span>
+            </div>
+        </div>
+        
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <div class="avatar">张</div>
+                <div class="info">
+                    <h4 id="chatName">张先生</h4>
+                    <p id="chatStatus">● 在线</p>
+                </div>
+                <div class="actions">
+                    <button onclick="toggleStats()">📊 数据面板</button>
+                    <button onclick="resetChat()">🔄 重置演示</button>
+                </div>
+            </div>
+            
+            <div class="messages" id="messages"></div>
+            
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="输入消息体验AI客服..." onkeydown="if(event.key==='Enter')sendMessage()">
+                <button onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+        
+        <!-- Stats Panel -->
+        <div class="stats-panel" id="statsPanel">
+            <h3>📈 实时数据</h3>
+            
+            <div class="stat-card">
+                <div class="label">今日对话总数</div>
+                <div class="value blue" id="statTotal">0</div>
+                <div class="bar"><div class="bar-fill" style="width: 85%; background: #00d2ff;"></div></div>
+            </div>
+            <div class="stat-card">
+                <div class="label">AI自动解决率</div>
+                <div class="value green" id="statResolve">0%</div>
+                <div class="bar"><div class="bar-fill" style="width: 75%; background: #00e676;"></div></div>
+            </div>
+            <div class="stat-card">
+                <div class="label">平均响应时间</div>
+                <div class="value purple" id="statResponse">0s</div>
+                <div class="bar"><div class="bar-fill" style="width: 30%; background: #764ba2;"></div></div>
+            </div>
+            <div class="stat-card">
+                <div class="label">客户满意度</div>
+                <div class="value" style="color: #ffab00;" id="statSatisfy">0/5</div>
+                <div class="bar"><div class="bar-fill" style="width: 96%; background: #ffab00;"></div></div>
+            </div>
+            
+            <h3 style="margin-top: 20px;">🏷️ 热门问题分类</h3>
+            <div style="font-size: 0.8rem; line-height: 2.2; color: #aaa;">
+                📦 产品咨询 <span style="float: right; color: #00d2ff;">38%</span><br>
+                💰 价格/订单 <span style="float: right; color: #00e676;">25%</span><br>
+                🔄 退换货 <span style="float: right; color: #764ba2;">18%</span><br>
+                🔧 技术支持 <span style="float: right; color: #ffab00;">12%</span><br>
+                ❓ 其他 <span style="float: right; color: #888;">7%</span>
+            </div>
+            
+            <h3 style="margin-top: 20px;">⏱️ 响应时间分布</h3>
+            <div style="font-size: 0.8rem; line-height: 2.2; color: #aaa;">
+                &lt;1秒 <span style="float: right; color: #00e676;">62%</span><br>
+                1-3秒 <span style="float: right; color: #00d2ff;">28%</span><br>
+                &gt;3秒 <span style="float: right; color: #ff5252;">10%</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="ai-badge" onclick="window.location.href='index.html'">
+        🏠 TechSail Studio
+    </div>
+
+    <script>
+        // AI Customer Service Demo
+        const chatData = [
+            {
+                name: "张先生", status: "在线", initial: "张",
+                messages: [
+                    { type: "user", text: "你好，我想咨询一下你们的产品" },
+                    { type: "bot", text: "您好张先生！很高兴为您服务 😊\n\n请问您想了解我们哪款产品呢？我们目前有以下热门产品：\n\n1. 📱 智能助手 Pro - ¥299/月\n2. 🏢 企业协作套件 - ¥599/月\n3. 🎯 数据分析平台 - ¥899/月\n\n您也可以直接告诉我您的需求，我来为您推荐最合适的方案。", replies: ["了解智能助手 Pro", "了解企业协作套件", "根据需求推荐", "对比所有产品"] },
+                    { type: "user", text: "根据需求推荐" },
+                    { type: "bot", text: "好的！为了给您最精准的推荐，请告诉我：\n\n👤 您是个人使用还是企业使用？\n📊 主要想解决什么问题？（如：提高效率、数据分析、客户管理等）\n👥 大概多少人使用？\n\n这样我就能为您量身推荐了！" },
+                    { type: "user", text: "个人使用，主要提高工作效率" },
+                    { type: "bot", text: "根据您的需求，我推荐 **智能助手 Pro**！\n\n✅ 完美匹配您的原因：\n• 专为个人效率优化设计\n• AI自动整理日程、生成报告\n• 支持多平台同步\n• 目前新用户首月5折优惠\n\n💰 原价 ¥299/月 → **优惠价 ¥149/月**\n\n要不要我帮您开通试用？7天免费体验，不满意随时取消～", replies: ["好的，帮我开通试用", "还有其他选择吗", "和协作套件有什么区别"] },
+                ]
+            },
+            {
+                name: "李女士", status: "在线", initial: "李",
+                messages: [
+                    { type: "user", text: "退款流程是什么？" },
+                    { type: "bot", text: "您好李女士，退款流程非常简单：\n\n🔄 **退款步骤：**\n1️⃣ 进入「我的订单」页面\n2️⃣ 找到需要退款的订单\n3️⃣ 点击「申请退款」\n4️⃣ 选择退款原因\n5️⃣ 提交申请\n\n⏱️ **退款时效：**\n• 申请后24小时内审核\n• 审核通过后3-5个工作日到账\n• 紧急退款可申请加急处理\n\n请问您是要对哪个订单申请退款呢？", replies: ["我要退款", "查看退款进度", "退款政策详情"] },
+                    { type: "user", text: "我要退款" },
+                    { type: "bot", text: "请您提供以下信息，我来帮您处理：\n\n📋 **订单信息：**\n• 订单号（可在「我的订单」查看）\n• 退款原因\n\n您可以直接发给我订单号，我立即为您查询～" },
+                ]
+            },
+            {
+                name: "王经理", status: "忙碌", initial: "王",
+                messages: [
+                    { type: "user", text: "企业批量采购有什么优惠？" },
+                    { type: "bot", text: "王经理您好！企业批量采购我们提供专属优惠：\n\n🏢 **企业批量方案：**\n\n| 数量 | 折扣 | 节省 |\n|------|------|------|\n| 10-49席 | 8.5折 | 15% |\n| 50-99席 | 7.5折 | 25% |\n| 100+席 | 6.5折 | 35% |\n\n🎁 **额外福利：**\n• 专属客户经理一对一服务\n• 定制化功能开发\n• 优先技术支持\n• 灵活付款方式\n\n需要我帮您出一份详细的报价方案吗？", replies: ["需要报价方案", "安排客户经理联系我", "了解更多企业功能"] },
+                ]
+            },
+            {
+                name: "陈同学", status: "离线", initial: "陈",
+                messages: [
+                    { type: "user", text: "这个功能怎么用？" },
+                    { type: "bot", text: "您好！请问是哪个功能呢？\n\n您可以：\n📖 查看使用教程\n🎥 观看视频演示\n💬 描述具体问题\n\n或者直接告诉我您想完成什么操作，我来一步步指导您！" },
+                    { type: "user", text: "数据导出功能" },
+                    { type: "bot", text: "数据导出操作很简单：\n\n1️⃣ 进入「数据中心」页面\n2️⃣ 选择要导出的数据类型\n3️⃣ 设置时间范围\n4️⃣ 点击右上角「导出」按钮\n5️⃣ 选择格式（Excel/PDF/CSV）\n6️⃣ 等待下载完成\n\n💡 **小贴士：** 大数据量导出建议选择「后台导出」，导出完成后会通知您下载。\n\n还有其他问题吗？", replies: ["可以自动导出吗", "谢谢，解决了", "其他功能问题"] },
+                ]
+            }
+        ];
+        
+        let currentChat = 0;
+        let messageIndex = 0;
+        let isAnimating = false;
+        
+        function switchChat(index) {
+            currentChat = index;
+            messageIndex = 0;
+            document.querySelectorAll('.chat-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+            document.getElementById('chatName').textContent = chatData[index].name;
+            document.getElementById('chatStatus').textContent = '● ' + chatData[index].status;
+            document.getElementById('chatHeader').querySelector('.avatar').textContent = chatData[index].initial;
+            document.getElementById('messages').innerHTML = '';
+            
+            // Auto play messages
+            playMessages();
+        }
+        
+        function playMessages() {
+            if (isAnimating) return;
+            const chat = chatData[currentChat];
+            if (messageIndex < chat.messages.length) {
+                isAnimating = true;
+                const msg = chat.messages[messageIndex];
+                
+                // Show typing indicator first
+                if (msg.type === 'bot') {
+                    showTyping();
+                    setTimeout(() => {
+                        removeTyping();
+                        addMessage(msg);
+                        messageIndex++;
+                        isAnimating = false;
+                        setTimeout(playMessages, 1500);
+                    }, 1200);
+                } else {
+                    addMessage(msg);
+                    messageIndex++;
+                    isAnimating = false;
+                    setTimeout(playMessages, 800);
+                }
+            }
+        }
+        
+        function addMessage(msg) {
+            const container = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.className = `message ${msg.type}`;
+            
+            let html = msg.text.replace(/\n/g, '<br>');
+            
+            if (msg.replies && msg.type === 'bot') {
+                html += '<div class="quick-replies">';
+                msg.replies.forEach(reply => {
+                    html += `<span class="quick-reply" onclick="selectReply('${reply}')">${reply}</span>`;
+                });
+                html += '</div>';
+            }
+            
+            html += `<div class="meta">${msg.type === 'bot' ? '🤖 AI客服' : '👤 用户'} · ${new Date().toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'})}</div>`;
+            
+            div.innerHTML = html;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function showTyping() {
+            const container = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.className = 'message bot';
+            div.id = 'typingIndicator';
+            div.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function removeTyping() {
+            const el = document.getElementById('typingIndicator');
+            if (el) el.remove();
+        }
+        
+        function selectReply(text) {
+            addMessage({ type: 'user', text });
+            // Simple AI responses for quick replies
+            const responses = {
+                "了解智能助手 Pro": "智能助手 Pro 是我们最受欢迎的产品！\n\n🌟 核心功能：\n• AI对话助手 - 智能问答\n• 日程管理 - 自动规划\n• 文档生成 - 一键创作\n• 数据分析 - 可视化报表\n\n目前有7天免费试用，要试试吗？",
+                "好的，帮我开通试用": "太好了！🎉\n\n试用已为您开通：\n📧 确认邮件已发送到您的邮箱\n⏰ 试用期为7天（2026-03-26 至 2026-04-02）\n\n试用期间享受完整功能，到期后不自动扣费。有任何问题随时找我～",
+                "需要报价方案": "好的！请您提供：\n\n📋 企业信息：公司名称\n👥 需要席位数：预计使用人数\n🎯 主要场景：核心使用需求\n\n我会在30分钟内发送详细的报价方案给您。也可以安排专属客户经理电话沟通。",
+            };
+            
+            setTimeout(() => {
+                showTyping();
+                setTimeout(() => {
+                    removeTyping();
+                    addMessage({ type: 'bot', text: responses[text] || '感谢您的咨询！如果您还有其他问题，随时问我 😊' });
+                }, 1000);
+            }, 300);
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            if (!text || isAnimating) return;
+            
+            input.value = '';
+            addMessage({ type: 'user', text });
+            
+            // Generate smart AI response
+            setTimeout(() => {
+                showTyping();
+                setTimeout(() => {
+                    removeTyping();
+                    const response = generateResponse(text);
+                    addMessage({ type: 'bot', text: response });
+                }, 1000 + Math.random() * 800);
+            }, 300);
+        }
+        
+        function generateResponse(input) {
+            const lower = input.toLowerCase();
+            if (lower.includes('价格') || lower.includes('多少钱') || lower.includes('费用')) {
+                return '💰 **价格信息：**\n\n• 智能助手 Pro：¥299/月\n• 企业协作套件：¥599/月\n• 数据分析平台：¥899/月\n\n🎉 新用户首月享5折优惠！\n年付方案额外省20%\n\n需要了解更多细节吗？';
+            }
+            if (lower.includes('你好') || lower.includes('hi') || lower.includes('hello')) {
+                return '您好！👋 很高兴为您服务。\n\n我是AI智能客服，可以帮您：\n• 📦 产品咨询\n• 💰 价格查询\n• 🔄 退换货处理\n• 🔧 技术支持\n\n请问有什么可以帮您的？';
+            }
+            if (lower.includes('谢谢') || lower.includes('感谢')) {
+                return '不客气！😊\n\n很高兴能帮到您！如果还有其他问题，随时找我就好。\n\n祝您使用愉快！🌟';
+            }
+            return '感谢您的咨询！让我为您查看一下...\n\n根据我的分析，这个问题我可以为您提供详细的解答。请问您能提供更多细节吗？比如：\n• 具体是哪个功能/产品？\n• 遇到了什么具体情况？\n\n这样我能更准确地帮助您 😊';
+        }
+        
+        function toggleStats() {
+            document.getElementById('statsPanel').classList.toggle('visible');
+            if (document.getElementById('statsPanel').classList.contains('visible')) {
+                animateStats();
+            }
+        }
+        
+        function animateStats() {
+            animateNumber('statTotal', 0, 128, 1000);
+            animateNumber('statResolve', 0, 75, 1200, '%');
+            setTimeout(() => {
+                document.getElementById('statResponse').textContent = '1.2s';
+                document.getElementById('statSatisfy').textContent = '4.8/5';
+            }, 800);
+        }
+        
+        function animateNumber(id, from, to, duration, suffix = '') {
+            const el = document.getElementById(id);
+            const start = performance.now();
+            function update(time) {
+                const progress = Math.min((time - start) / duration, 1);
+                const value = Math.round(from + (to - from) * progress);
+                el.textContent = value + suffix;
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+        
+        function resetChat() {
+            switchChat(currentChat);
+        }
+        
+        // Initialize
+        window.onload = () => {
+            setTimeout(() => switchChat(0), 500);
+        };
+    </script>
+</body>
+</html>
